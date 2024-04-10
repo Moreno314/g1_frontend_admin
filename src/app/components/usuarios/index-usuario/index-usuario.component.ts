@@ -1,5 +1,6 @@
 import { Component , OnInit} from '@angular/core';
 import { UsuarioService } from '../../../services/usuario.service';
+import { AdminService } from '../../../services/admin.service';
 
 @Component({
   selector: 'app-index-usuario',
@@ -14,11 +15,13 @@ export class IndexUsuarioComponent implements OnInit {
 
   public page=1
   public pageSize=1
+  public token
 
   constructor(
-    private _usuarioService:UsuarioService
+    private _usuarioService:UsuarioService,
+    private _adminService:AdminService
   ){
-
+    this.token=this._adminService.getToken();
   }
 
   ngOnInit(): void {
@@ -40,43 +43,46 @@ export class IndexUsuarioComponent implements OnInit {
         filtro = null;
     }
 
-    // Solo pasa valores no nulos a la función listar_usuarios_filtro_admin
-    this._usuarioService.listar_usuarios_filtro_admin(tipo!, filtro!).subscribe(
-        response => {
-            this.usuarios = response.data;
-        },
-        error => {
-            console.log(error);
-        }
-    );
+    // Verifica que this.token no sea nulo antes de utilizarlo
+    if (this.token !== null) {
+        // Solo pasa valores no nulos a la función listar_usuarios_filtro_admin
+        this._usuarioService.listar_usuarios_filtro_admin(tipo!, filtro!, this.token).subscribe(
+            response => {
+                this.usuarios = response.data;
+            },
+            error => {
+                console.log(error);
+            }
+        );
+    }
 }
 
 
 
-  filtro(tipo: string) {
-   
-    if(tipo=='apellidos'){
-      
-      this._usuarioService.listar_usuarios_filtro_admin(tipo, this.filtro_apellidos).subscribe(
-        response => {
-            this.usuarios = response.data;
-        },
-        error => {
-            console.log(error);
-        }
-    );
-    }else if(tipo=='correo'){
-      this._usuarioService.listar_usuarios_filtro_admin(tipo, this.filtro_correo).subscribe(
-        response => {
-            this.usuarios = response.data;
-        },
-        error => {
-            console.log(error);
-        }
-    );
-    }
-
-    
+filtro(tipo: string) {
+  if(tipo == 'apellidos') {
+      if (this.token !== null) {
+          this._usuarioService.listar_usuarios_filtro_admin(tipo, this.filtro_apellidos, this.token).subscribe(
+              response => {
+                  this.usuarios = response.data;
+              },
+              error => {
+                  console.log(error);
+              }
+          );
+      }
+  } else if(tipo == 'correo') {
+      if (this.token !== null) {
+          this._usuarioService.listar_usuarios_filtro_admin(tipo, this.filtro_correo, this.token).subscribe(
+              response => {
+                  this.usuarios = response.data;
+              },
+              error => {
+                  console.log(error);
+              }
+          );
+      }
   }
+}
 
 }

@@ -19,8 +19,8 @@ export class UsuarioService {
     this.url = GLOBAL.url;
   }
 
-  listar_usuarios_filtro_admin(tipo: string, filtro: string | number): Observable<any> {
-    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+  listar_usuarios_filtro_admin(tipo: string, filtro: string | number,token:string): Observable<any> {
+    let headers = new HttpHeaders({'Content-Type': 'application/json','Authorization':token});
     return this._http.get(this.url + 'listar_usuarios_filtro_admin/' + tipo + '/' + filtro, { headers: headers });
   }
 

@@ -44,7 +44,6 @@ export class AdminService {
       // Decodificar el token solo si no es nulo
       const helper = new JwtHelperService();
       var decodedToken = helper.decodeToken(token);
-      console.log(decodedToken);
       if (!decodedToken) {
         return false;
       }
